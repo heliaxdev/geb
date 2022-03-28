@@ -174,3 +174,18 @@ Nu f = CofreeComonad f ()
 -- which can be extended to generate super-languages of Geb.
 data GebTypeF : Type -> Type where
   Geb : GebTypeF carrier
+
+Functor GebTypeF where
+  map _ Geb = Geb
+
+FreeGebType : Type -> Type
+FreeGebType = FreeMonad GebTypeF
+
+gebCata : Functor f => Catamorphism GebTypeF v a
+gebCata alg (InFree x) = alg $ case x of
+  TermVar v' => TermVar v'
+  TermComposite t => TermComposite $ case t of
+    Geb => Geb
+
+CofreeGebType : Type -> Type
+CofreeGebType = CofreeComonad GebTypeF
